@@ -35,7 +35,7 @@ escrito **Eric Evans** y publicado 2004.
 Cómo vemos, la propuesta es que tanto **Entidades** como **Agregados**, ambos
 objetos accedan a los datos comunicándose con el Repository.
 Un punto importante a tener en cuenta es que tanto las **Entidades, Agregados y
-Repository** son parte de nuestro **Dominio**(color azul). Mientras que son
+Repository** son parte de nuestro **Dominio**(color amarillo). Mientras que son
 las implementaciones de la interfaz son quienes se encuentran en la capa más
 externa, es decir, infraestructura(color verde).
 Esto tiene sentido, puesto que es el dominio quién define el contrato que se debe

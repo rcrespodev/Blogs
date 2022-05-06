@@ -5,7 +5,7 @@ Se explicarán conceptos agnósticos a los lenguajes como por ejemplo Principios
 **Solid**, patrones de **Diseño** y **Arquitectura**.
 
 ## Patrones de Diseño:
-- [Repository pattern](https://github.com/rcrespodev/Blogs/design/repository).
+- [Repository pattern](https://github.com/rcrespodev/Blogs/blob/main/design/repository/README.md).
 
 ## SOLID
 - [Open-Closed](https://github.com/rcrespodev/Blogs/solid/open_closed).
