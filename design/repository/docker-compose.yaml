@@ -1,0 +1,9 @@
+version: "1.0.0"
+
+services:
+  app:
+    image: "repository_pattern:latest"
+    ports:
+      - 8080:8080
+    environment:
+      TEST_ENV: RodrigoCrespo
