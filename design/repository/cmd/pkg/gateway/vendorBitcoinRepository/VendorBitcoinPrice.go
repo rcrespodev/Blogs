@@ -1,6 +1,6 @@
-package domain
+package vendorBitcoinRepository
 
-type T struct {
+type VendorBitcoinPrice struct {
 	Time struct {
 		Updated    string `json:"updated"`
 		UpdatedISO string `json:"updatedISO"`

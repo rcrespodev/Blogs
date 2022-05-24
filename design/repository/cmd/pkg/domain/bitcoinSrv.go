@@ -27,6 +27,5 @@ func (b BitcoinSrv) GetBitcoinPrice() *BitcoinResponse {
 			Currencies: bitcoinPrice.currencies,
 		},
 		ImplementationName: implementationName,
-		Error:              err.Error(),
 	}
 }

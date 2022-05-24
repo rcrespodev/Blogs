@@ -5,6 +5,7 @@ import (
 	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/server/globalObjects"
 	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/server/handlers"
 	"log"
+	"os"
 	"reflect"
 	"testing"
 	"time"
@@ -26,6 +27,13 @@ func TestBitcoinSrvHandler(t *testing.T) {
 		// TODO: Add test cases.
 	}
 
+	err := os.Setenv("REDIS_HOST", "localhost")
+	err = os.Setenv("REDIS_PORT", "6379")
+	err = os.Setenv("VENDOR_ENDPOINT", "https://api.coindesk.com/v1/bpi/currentprice.json")
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
 	if err := globalObjects.New(); err != nil {
 		log.Fatal(err.Error())
 	}
@@ -40,7 +48,7 @@ func TestBitcoinSrvHandler(t *testing.T) {
 				}
 
 				if !reflect.DeepEqual(resp.Error, tt.resp.Error) {
-					t.Errorf("\n- actual Error:\n\t %v\n- expected Error:\n\t %v", resp.Error, tt.resp.Error)
+					t.Errorf("\n- Implementation: %v\n - actual Error:\n\t %v\n- expected Error:\n\t %v", resp.ImplementationName, resp.Error, tt.resp.Error)
 				}
 				time.Sleep(time.Microsecond * 100000)
 			}

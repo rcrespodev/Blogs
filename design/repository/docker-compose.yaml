@@ -6,4 +6,6 @@ services:
     ports:
       - 8080:8080
     environment:
-      TEST_ENV: RodrigoCrespo
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      VENDOR_ENDPOINT: https://api.coindesk.com/v1/bpi/currentprice.json

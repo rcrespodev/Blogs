@@ -2,6 +2,11 @@ package gateway
 
 import (
 	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/domain"
+	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/gateway/mockBitcoinRepository"
+	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/gateway/redisBitcoinRepository"
+	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/gateway/vendorBitcoinRepository"
+	"os"
+	"strconv"
 	"time"
 )
 
@@ -11,12 +16,24 @@ type BitcoinRepositoryFactory struct {
 }
 
 func NewBitcoinRepositoryFactory(test bool) (error, *BitcoinRepositoryFactory) {
-	repo := NewMockRepository()
+	redisHost := os.Getenv("REDIS_HOST")
+	redisPort, err := strconv.Atoi(os.Getenv("REDIS_PORT"))
+	if err != nil {
+		return err, nil
+	}
+
+	redisRepository, err := redisBitcoinRepository.New(redisHost, redisPort, 0)
+	if err != nil {
+		return err, nil
+	}
+
+	vendorRepository := vendorBitcoinRepository.NewVendorRepository(os.Getenv("VENDOR_ENDPOINT"))
+
 	return nil, &BitcoinRepositoryFactory{
 		test:             test,
-		mockRepository:   repo,
-		redisRepository:  NewRedisRepository(),
-		vendorRepository: NewVendorRepository(),
+		mockRepository:   mockBitcoinRepository.New(),
+		redisRepository:  redisRepository,
+		vendorRepository: vendorRepository,
 	}
 }
 

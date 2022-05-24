@@ -22,3 +22,15 @@ func NewBitcoinPrice(updatedAt time.Time, currencies []Currency) *BitcoinPrice {
 		currencies: currencies,
 	}
 }
+
+func (b BitcoinPrice) UpdatedAt() time.Time {
+	return b.updatedAt
+}
+
+func (b BitcoinPrice) CryptoName() string {
+	return b.cryptoName
+}
+
+func (b BitcoinPrice) Currencies() []Currency {
+	return b.currencies
+}

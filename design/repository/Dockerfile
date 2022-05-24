@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Download Go modules
-RUN go mod download
+RUN go mod tidy
 
 # Build
 RUN GOARCH=amd64 GOOS=linux go build -o ./bin/main-linux cmd/main.go

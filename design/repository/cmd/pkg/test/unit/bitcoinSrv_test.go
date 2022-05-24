@@ -2,7 +2,7 @@ package unit
 
 import (
 	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/domain"
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/gateway"
+	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/gateway/mockBitcoinRepository"
 	"reflect"
 	"testing"
 	"time"
@@ -24,7 +24,7 @@ func TestBitcoinSrv_GetBitcoinPrice(t *testing.T) {
 	}{
 		{
 			name: "base Test",
-			args: args{repository: gateway.NewMockRepository()},
+			args: args{repository: mockBitcoinRepository.New()},
 			resp: resp{resp: &domain.BitcoinResponse{
 				BitcoinPrice: &domain.BitcoinPriceResponse{
 					UpdatedAt:  time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
@@ -38,7 +38,6 @@ func TestBitcoinSrv_GetBitcoinPrice(t *testing.T) {
 					},
 				},
 				ImplementationName: "Mock_Repository",
-				Error:              "nil",
 			},
 			},
 		},
