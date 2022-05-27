@@ -34,34 +34,39 @@ func (v VendorBitcoinRepository) BitcoinPrice() (error, *domain.BitcoinPrice) {
 		}
 	}
 
-	return nil, nil
+	bitcoinPrice, err := v.newBitcoinPrice(VendorBitcoinPrice)
+	if err != nil {
+		return err, nil
+	}
+
+	return nil, bitcoinPrice
 }
 
-func (p VendorBitcoinPrice) newBitcoinPrice(price VendorBitcoinPrice) (*domain.BitcoinPrice, error) {
+func (v VendorBitcoinRepository) newBitcoinPrice(price VendorBitcoinPrice) (*domain.BitcoinPrice, error) {
 
-	rateParser, err := newRateParser(map[string]string{
-		price.Bpi.USD.Code: price.Bpi.USD.RateFloat,
-		price.Bpi.EUR.Code: price.Bpi.EUR.RateFloat,
-		price.Bpi.GBP.Code: price.Bpi.GBP.RateFloat,
-	})
-	if err != nil {
-		return nil, err
-	}
+	//rateParser, err := newRateParser(map[string]string{
+	//	price.Bpi.USD.Code: price.Bpi.USD.RateFloat,
+	//	price.Bpi.EUR.Code: price.Bpi.EUR.RateFloat,
+	//	price.Bpi.GBP.Code: price.Bpi.GBP.RateFloat,
+	//})
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	bitcoinPrice := domain.NewBitcoinPrice(time.Now(), []domain.Currency{
 		{
 			Code:        price.Bpi.USD.Code,
-			Rate:        rateParser.GetFloatRate(price.Bpi.USD.Code),
+			Rate:        price.Bpi.USD.RateFloat,
 			Description: price.Bpi.USD.Description,
 		},
 		{
 			Code:        price.Bpi.EUR.Code,
-			Rate:        rateParser.GetFloatRate(price.Bpi.EUR.Code),
+			Rate:        price.Bpi.EUR.RateFloat,
 			Description: price.Bpi.EUR.Description,
 		},
 		{
 			Code:        price.Bpi.GBP.Code,
-			Rate:        rateParser.GetFloatRate(price.Bpi.GBP.Code),
+			Rate:        price.Bpi.GBP.RateFloat,
 			Description: price.Bpi.GBP.Description,
 		},
 	})

@@ -10,25 +10,25 @@ type VendorBitcoinPrice struct {
 	ChartName  string `json:"chartName"`
 	Bpi        struct {
 		USD struct {
-			Code        string `json:"code"`
-			Symbol      string `json:"symbol"`
-			Rate        string `json:"rate"`
-			Description string `json:"description"`
-			RateFloat   string `json:"rate_float"`
+			Code        string  `json:"code"`
+			Symbol      string  `json:"symbol"`
+			Rate        string  `json:"rate"`
+			Description string  `json:"description"`
+			RateFloat   float64 `json:"rate_float"`
 		} `json:"USD"`
 		GBP struct {
-			Code        string `json:"code"`
-			Symbol      string `json:"symbol"`
-			Rate        string `json:"rate"`
-			Description string `json:"description"`
-			RateFloat   string `json:"rate_float"`
+			Code        string  `json:"code"`
+			Symbol      string  `json:"symbol"`
+			Rate        string  `json:"rate"`
+			Description string  `json:"description"`
+			RateFloat   float64 `json:"rate_float"`
 		} `json:"GBP"`
 		EUR struct {
-			Code        string `json:"code"`
-			Symbol      string `json:"symbol"`
-			Rate        string `json:"rate"`
-			Description string `json:"description"`
-			RateFloat   string `json:"rate_float"`
+			Code        string  `json:"code"`
+			Symbol      string  `json:"symbol"`
+			Rate        string  `json:"rate"`
+			Description string  `json:"description"`
+			RateFloat   float64 `json:"rate_float"`
 		} `json:"EUR"`
 	} `json:"bpi"`
 }
