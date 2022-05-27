@@ -13,9 +13,9 @@ type Server struct {
 	engine      *gin.Engine
 }
 
-func New(host string, port uint) Server {
+func New(host string, port string) Server {
 	server := Server{
-		httpAddress: fmt.Sprintf("%s:%d", host, port),
+		httpAddress: fmt.Sprintf("%s:%s", host, port),
 		engine:      gin.New(),
 	}
 

@@ -15,7 +15,7 @@ func New() error {
 	}
 
 	envs := []string{
-		"REDIS_HOST", "REDIS_PORT", "VENDOR_ENDPOINT",
+		"APP_HOST", "APP_PORT", "REDIS_HOST", "REDIS_PORT", "VENDOR_ENDPOINT",
 	}
 
 	for _, env := range envs {
