@@ -44,15 +44,6 @@ func (v VendorBitcoinRepository) BitcoinPrice() (error, *domain.BitcoinPrice) {
 
 func (v VendorBitcoinRepository) newBitcoinPrice(price VendorBitcoinPrice) (*domain.BitcoinPrice, error) {
 
-	//rateParser, err := newRateParser(map[string]string{
-	//	price.Bpi.USD.Code: price.Bpi.USD.RateFloat,
-	//	price.Bpi.EUR.Code: price.Bpi.EUR.RateFloat,
-	//	price.Bpi.GBP.Code: price.Bpi.GBP.RateFloat,
-	//})
-	//if err != nil {
-	//	return nil, err
-	//}
-
 	bitcoinPrice := domain.NewBitcoinPrice(time.Now(), []domain.Currency{
 		{
 			Code:        price.Bpi.USD.Code,
