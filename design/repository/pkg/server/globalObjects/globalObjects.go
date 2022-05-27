@@ -2,7 +2,7 @@ package globalObjects
 
 import (
 	"fmt"
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/gateway"
+	"github.com/rcrespodev/Blogs/design/repository/pkg/gateway"
 	"os"
 )
 

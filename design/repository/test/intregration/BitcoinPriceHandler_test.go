@@ -1,9 +1,9 @@
 package intregration
 
 import (
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/domain"
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/server/globalObjects"
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/server/handlers"
+	"github.com/rcrespodev/Blogs/design/repository/api/v1/handlers"
+	"github.com/rcrespodev/Blogs/design/repository/pkg/domain"
+	"github.com/rcrespodev/Blogs/design/repository/pkg/server/globalObjects"
 	"log"
 	"os"
 	"reflect"
@@ -30,6 +30,8 @@ func TestBitcoinSrvHandler(t *testing.T) {
 	err := os.Setenv("REDIS_HOST", "localhost")
 	err = os.Setenv("REDIS_PORT", "6379")
 	err = os.Setenv("VENDOR_ENDPOINT", "https://api.coindesk.com/v1/bpi/currentprice.json")
+	err = os.Setenv("APP_HOST", "localhost")
+	err = os.Setenv("APP_PORT", "8080")
 	if err != nil {
 		log.Fatal(err.Error())
 	}

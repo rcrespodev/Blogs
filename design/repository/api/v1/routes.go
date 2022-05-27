@@ -1,7 +1,8 @@
-package handlers
+package v1
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/rcrespodev/Blogs/design/repository/api/v1/handlers"
 	"net/http"
 )
 
@@ -32,7 +33,7 @@ func NewRoutes() Routes {
 		{
 			httpMethod:   http.MethodGet,
 			relativePath: "/bitcoin-price",
-			handler:      HttpGetBitcoinPriceGinHandlerFunc(),
+			handler:      handlers.HttpGetBitcoinPriceGinHandlerFunc(),
 		},
 	}
 	return Routes{Routes: routes}

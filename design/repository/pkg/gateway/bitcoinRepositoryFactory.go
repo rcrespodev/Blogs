@@ -1,10 +1,10 @@
 package gateway
 
 import (
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/domain"
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/gateway/mockBitcoinRepository"
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/gateway/redisBitcoinRepository"
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/gateway/vendorBitcoinRepository"
+	"github.com/rcrespodev/Blogs/design/repository/pkg/domain"
+	"github.com/rcrespodev/Blogs/design/repository/pkg/gateway/mockBitcoinRepository"
+	"github.com/rcrespodev/Blogs/design/repository/pkg/gateway/redisBitcoinRepository"
+	"github.com/rcrespodev/Blogs/design/repository/pkg/gateway/vendorBitcoinRepository"
 	"os"
 	"strconv"
 	"time"

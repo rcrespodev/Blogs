@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/server"
+	"github.com/rcrespodev/Blogs/design/repository/pkg/server"
 	"log"
 	"os"
 )

@@ -3,8 +3,8 @@ package server
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/server/globalObjects"
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/server/handlers"
+	"github.com/rcrespodev/Blogs/design/repository/api/v1"
+	"github.com/rcrespodev/Blogs/design/repository/pkg/server/globalObjects"
 	"log"
 )
 
@@ -33,7 +33,7 @@ func (s *Server) Run() error {
 }
 
 func (s *Server) registerRoutes() {
-	routes := handlers.NewRoutes()
+	routes := v1.NewRoutes()
 	for _, r := range routes.Routes {
 		s.engine.Handle(r.HttpMethod(), r.RelativePath(), r.Handler())
 	}

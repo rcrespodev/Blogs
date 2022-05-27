@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/domain"
+	"github.com/rcrespodev/Blogs/design/repository/pkg/domain"
 	"time"
 )
 

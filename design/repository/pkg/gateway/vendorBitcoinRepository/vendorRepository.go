@@ -3,7 +3,7 @@ package vendorBitcoinRepository
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/domain"
+	"github.com/rcrespodev/Blogs/design/repository/pkg/domain"
 	"net/http"
 	"time"
 )

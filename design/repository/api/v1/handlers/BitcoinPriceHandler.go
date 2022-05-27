@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/domain"
-	"github.com/rcrespodev/Blogs/design/repository/cmd/pkg/server/globalObjects"
+	"github.com/rcrespodev/Blogs/design/repository/pkg/domain"
+	"github.com/rcrespodev/Blogs/design/repository/pkg/server/globalObjects"
 )
 
 func HttpGetBitcoinPriceGinHandlerFunc() gin.HandlerFunc {
