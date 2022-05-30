@@ -76,7 +76,6 @@ func (r *RedisBitcoinRepository) BitcoinPrice() (error, *domain.BitcoinPrice) {
 
 	var redisBitcoinPrice RedisBitcoinPrice
 	err = json.Unmarshal([]byte(strResult), &redisBitcoinPrice)
-	//bitcoinPrice, ok := result.(*domain.BitcoinPrice)
 	if err != nil {
 		return fmt.Errorf("internal Server Error"), nil
 	}

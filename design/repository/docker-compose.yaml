@@ -19,4 +19,3 @@ services:
     command: redis-server --save 20 1
     ports:
       - 6379:6379
-#      - 6380:6379
