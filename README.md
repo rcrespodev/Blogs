@@ -3,6 +3,7 @@
 This is a series of technical articles on Software design and Best Practices.
 I will explain concepts **agnostics to programing languages** such as **SOLID** Principles, **design patterns** and
 **architecture patterns**.
+All articles contain a theory part and practical example with installation steps.
 
 ## Design Patterns:
 - [Repository pattern](https://github.com/rcrespodev/Blogs/blob/main/design/repository/README.md).
