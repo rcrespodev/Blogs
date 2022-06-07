@@ -1,130 +1,180 @@
-## Repository Pattern.
+# Repository Pattern.
 
-La preocupación principal del patrón Repository es desacoplar el acceso a datos de
-la lógica de dominio, hablando en términos de DDD.
-Entonces, la aplicación del patrón nos entrega como lógica de dominio o negocio
-totalmente **independiente de las tecnologías** que se utilicen para la lectura
-y persistencia de datos.
-Esto significa que los objetos de nuestro dominio estarán interactuando con una
-**abstracción** de la capa de datos.
-De esta forma, nuestro dominio no conoce ningún detalle en cuanto a la
-implementación de la infraestructura, lo que permite una clara separación de
-responsabilidades, permitiendo que los objetos del dominio tengan como único fin
-el implementar lógica de negocio, derivando la responsabilidad de persistencia de
-datos hacia cada una de las implementaciones concretas de la capa de datos.
+[![GoReference](https://pkg.go.dev/badge/golang.org/x/tools)](https://pkg.go.dev/golang.org/x/tools)
 
-### ¿Cómo luce el patrón Repository?
-Básicamente, se trata de una abstracción del sistema de persistencia, es decir, una
-interfaz con sus diferentes implementaciones.
+# Contents
+- [Repository Pattern.](#repositoryPattern)
+  - [Introduction.](#introduction)
+  - [How looks the Repository Pattern?](#howLooks)
+  - [Beneficies](#beneficies)
+    - [Single Responsibility Principle](#srp)
+    - [Clean Architectures](#cleanArchitectures)
+    - [Unit Testing and Repositories](#testing)
+  - [API Practical Example](#api)
+    - [Install](#install)
+    - [Usage](#usage)
+      - [Consume API](#consume)
+      - [Run Tests in local](#localTesting)
+    - [Code Review](#codeReview)
+      - [type BitcoinRepository.](#BitcoinRepository)
+      - [type BitcoinSrv.](#BitcoinSrv)
+      - [type MockBitcoinRepository.](#MockBitcoinRepository)
+      - [type RedisBitcoinRepository.](#RedisBitcoinRepository)
+      - [type VendorBitcoinRepository.](#VendorBitcoinRepository)
+      - [type BitcoinRepositoryFactory.](#BitcoinRepositoryFactory)
+
+# Repository Pattern. <a name="repositoryPattern"></a>
+## Introduction. <a name="introduction"></a>
+Any business application, no matter how small, probably needs a data persistence system.
+As a result of this demand regarding data management, today we find a market full of different tools and technologies
+dedicated to persistence: SQL Databases, non-SQL databases, cloud services, spreadsheets, etc.
+
+On the other hand, one of the biggest challenges that developers face when designing scalable applications is to
+achieve a **low coupling between the different modules of the system**, in order to deliver a solution that provides
+**easy testability and deployment**.
+
+The **_Repository pattern_** comes to solve a recurring problem for us:
+The coupling to persistence systems.
+**_Your primary concern is to decouple data access and writing of the logic that is part of the domain of the Application_**,
+speaking in terms of DDD.
+The goal is to build a domain totally independent of the different technologies used for data persistence.
+
+The pattern proposes that domain objects interact only with an abstraction of the data layer.
+In this way, our domain does not know any details regarding the implementation of the infrastructure, which allows a
+clear **separation of responsibilities**, allowing domain objects to have as their only task to implement business logic
+and derive the responsibility of data persistence towards the specific implementation or implementations that exist in
+external layers of the application, in other words, infrastructure layers.
+
+Data layer or infrastructure is understood as any tool read and/or write data, be it a database, a cache,
+external service, files or, for example, any array in memory.
+
+This solution was introduced first time in the **_book Domain Driven Design_**, written by **_Eric Evans_** in year 2004.
+
+## How looks the Repository Pattern? <a name="howLooks"></a>
+Basically, **it is an abstraction**, that is, an interface with its different implementations.
+
 ![repositoy_pattern_uml](img/repository_pattern.drawio.png.png)
+An important point is that **the interface Repository is part of our Domain** (yellow color).
+While they are the implementations of the interface who are in the infrastructure layer (green color).
+This makes sense, it’s the domain that define the contract that must be fulfilled, since it’s the domain that knows
+what operations are necessary to perform on the data in order to complete the uses cases.
 
-* <span style="color:blue">**Dominio**</span>
-* <span style="color:green">**Infraestructura**</span>
-
-### ¿Cuál es el valor que aporta?
-
-Cómo vemos, la propuesta es que tanto **Entidades** como **Agregados**, ambos
-objetos accedan a los datos comunicándose con el Repository.
-Un punto importante a tener en cuenta es que tanto las **Entidades, Agregados y
-Repository** son parte de nuestro **Dominio**(color amarillo). Mientras que son
-las implementaciones de la interfaz son quienes se encuentran en la capa más
-externa, es decir, infraestructura(color verde).
-Esto tiene sentido, puesto que es el dominio quién define el contrato que se debe
-cumplir, ya que es el dominio quien conoce qué operaciones son necesarias realizar
-sobre los datos para finalizar el caso de uso.
-No se debe confundir la definición de la Interfaz con la implementación de la Interfaz.
-
+As we see, the proposal is that both **Entities, Aggregates and Domain services interact with data through the Repository
+interface**.
 ![DDD_diagram_repository](img/DDD_Diagram.png)
 
-### ¿Cuáles son los beneficios del repository pattern?
+## Beneficies <a name="beneficies"></a>
+### Single Responsibility Principle <a name="srp"></a>
+In principle, the use of Repository encourages the **S of SOLID**: **Single Responsibility Principle**.
+That is, each thing has only one reason for change.
+A use case coupled to the infrastructure means that our domain have to deal with their own business rules and, as if
+this wasn’t enough, which also bears the responsibility of correctly implementing the persistence system.
 
-El uso de Repository alienta la S de **SOLID**: **Single
-Responsibility Principle**. Es decir, que cada *cosa* tenga solo una razón de cambio.
-Con responsabilides bien definidas y acotadas.
-Un caso de uso acoplado a la infraestructura conlleva a que nuestro dominio tenga que
-lidiar con sus propias reglas de negocio y, además, también cargue con la
-responsabilidad de operar sobre el sistema de persistencia.
-También tengamos en cuenta que en un escenario acoplado a la infraestructura, si
-cambiase la forma en que se persisten los datos, afectaría directamente a nuestro
-Dominio, teniendo que modificar los casos de uso para adaptarlos a la nueva infraestructura
-de capa de datos. Esto es nocivo para el diseño del sistema. Ya que, siguiendo
-el enfoque de DDD, las modificaciones en el dominio deberían ser a raíz de cambios
-en las reglas de negocio, no a raíz de cambios tecnológicos.
+Also keep in mind that in an infrastructure-coupled scenario, if change the way the data is persisted, it would
+directly affect our Domain, having to modify the use cases, adapting them to the new infrastructure.
+This is detrimental to system design. Since, following DDD approach, **domain modifications should be as a result of
+changes in business rules**, not due to changes in dependencies technological.
 
-Por otra parte, este patrón también alienta la regla principal de las **Clean
-Architectures**: Cuya premisa principal es la separación de la capa de dominio de la
-capa de infraestructura.
-Asegurando que el dominio no conoce ni lo más mínimo de la infraestructura. Y, de
-forma inversa, la infraestructura conoce cada detalle sobre el dominio, tal que, es
-la capa exterior quien se acopla a las necesidades de las capas más interiores.
-Esto permite que el dominio únicamente se modifique únicamente cuando surjan nuevas
-reglas de negocio.
-Incluso, dicho patrón se presentó por primera vez en el libro Domain Driven Design
-escrito **Eric Evans** y publicado 2004.
+### Clean Architectures <a name="cleanArchitectures"></a>
+On the other hand, it also encourages the main rule of **Clean
+Architectures**: Whose main premise is the **separation of the domain layer
+of the infrastructure layer**.
+Ensuring that the domain does not know infrastructure details. Of
+Inversely, it’s the infrastructure that knows the details of the domain,
+such that, it is the outer layer that is coupled to the needs of the layers
+more interiors.
+In **SOLID** terms, **this refers to Dependency Inversion Principle** since the Application services just depends on
+abstraction.
 
-Una vez entendida la solución podemos preguntarnos qué valor aporta este patrón
-de diseño. Es que nos permite desacoplar el acceso y actualización de datos
-del dominio, pero, ¿de qué sirve dicho desacople?
-Porque claro está que, en un proyecto productivo, rara vez se cambiaría la base de
-datos por una nueva.
-¿Entonces, si no está previsto cambiar de base de datos en el futuro,
-significa que el patrón no aporta ningún valor? Definitivamente no.
-Existe un punto clave que impulsa el uso de repositories en cualquier proyecto:
-**Unit Testing**.
+The repository interface belongs to the _Interface
+Adapters layer_. Sometimes they ara called Gateways.
+While the different implementations of Repository Interface belongs to the _Frameworks & Drivers layer_.
+![Clean_architecture_img](img/CleanArchitecture_img.jpg)
 
-Imaginemos que tenemos un **Servicio de dominio** que da de alta nuevos usuarios,
-podría llamarse UserRegister por ejemplo.
-Ahora bien, este servicio tiene diferentes validaciones (contraseña inválida, nombre
-de usuario ya existe, nombre de usuario no válido, email inexistente,
-datos obligatorios vacíos, etc). Podríamos realizar los test de este servicio
-utilizando una base de datos real, ya sea copia de producción o una base específica
-para testing. Cómo sea, deberíamos ocuparnos de actualizar las entradas de las
-tablas antes de correr los tests, de forma que cada caso de uso encuentre los
-valores correctos en el sistema de persistencia.
+### Unit Testing and Repositories <a name="testing"></a>
+Lastly, there is a key point that, in my opinion, drives the use of repositories in projects of any size:
+**Unit testing**.
 
-Por otro lado, también deberíamos lidiar con la latencia que implica levantar
-una base de datos real cada vez que corremos los tests, lo cual impacta de forma
-directa en nuestro ciclo de CI/CD.
+Let us imagine that we have an Application service that registers new users, it could be called UserRegister for example.
+Now, this service has different validations that imply perform database queries, such as checking that the name
+username or email do not exist.
+We could run unit tests of the service using a database actual, either production copy or a specific base for testing.
+Anyway, we should take care of updating the records of the tables before executing each unit test, so that each use
+case find the necessary values in the persistence system.
 
-Analizando este escenario detenidamente, cada vez que agreguemos
-un nuevo caso de uso a los tests unitarios, el tiempo de ejecución de los mismos
-podría crecer exponencialmente, ya que cada caso de uso posiblemente necesite de
-una o varias operaciones CRUD sobre la base de datos.
+On the other hand, we should also deal with the latency involved in wake up
+a real database every time we run unit tests, which directly impacts our CI/CD cycle.
 
-Este crecimiento en los tiempos de ejecución provoca que introducir una nueva feature
-o un simple refactoring se vuelva algo tedioso. Imagine si cada vez que ejecutamos
-los tests automáticos tuviéramos que esperar unos cuantos minutos u horas. Sería
-un despropósito de recursos para todos.
-Pues en proyecto de gran magnitud los test unitarios son gigantes y no deberían
-perder tiempo y recursos en levantar, limpiar y actualizar la base de datos.
+Analyzing this scenario carefully, every time we add a new use case for unit tests, their execution time could grow
+exponentially, since each use case possibly needs one or more CRUD operations on the database.
 
-En todo caso, la implementación concreta de cada base de datos debería testearse
-en la capa de infraestructura (**integration tests**) con casos de uso reducidos,
-no en la capa de dominio.
+This growth in execution times causes the introduction of a new feature or a simple refactor becomes tedious and a waste
+of resources.
+In large-scale projects, unit tests are huge, and it’s not optimal to build, clean and update the database to be able to
+execute them.
+In any case, **the specific implementation of each database could be tested in the infrastructure layer**
+(integration/black box tests) with a reduced number of use cases.
+This scenario gives us the opportunity to use a **Mock Repository** to use in unit tests, through an in-memory database,
+redis, an in-memory array or whatever that occurs to us and is useful for our context.
 
-Este escenario nos da lugar a utilizar un Repository para operar dentro del
-servicio de dominio, utilizando una base de datos en memoria, redis, un array o lo
-que se nos ocurra y sea útil para correr los test.
+**That is precisely the power of the Repository, the changeability it offers**.
+Today we could be using a persistence system A, tomorrow one B, but in turn using one C on the QA server and one D on
+the PRD server.
+In this way, persistence systems are placed in the place of detail of implementation, being able to use the database
+that best suits the needs of the project in each phase of the project.
 
-Precisamente ese es el poder del Repository, la **cambiabilidad** que ofrece.
-Hoy podríamos estar utilizando un sistema de persistencia A, mañana uno B,
-pero a su vez utilizando uno C en el servidor de QA y uno D en el servidor de PRD.
-De esta forma se coloca a los sistemas de persistencia en el lugar de "detalle de
-implementación", pudiendo usar la base de datos que más se adapta a las necesidades
-del proyecto en cada fase del mismo.
-
-### Ejemplo práctico:
-Este ejemplo consta de una API que devuelve la cotización del Bitcoin con respecto
-a otras monedas no digitales.
-Para entregar valores al Cliente, utiliza dos capas de datos:
+## API Practical Example <a name="api"></a>
+This example consists of an HTTP API that returns the currency quote Bitcoin relative to other non-digital currencies.
+To deliver values to the Client, it uses two Gateways:
 - Redis implementation in memory.
-- Vendor implementation: API pública --> https://api.coindesk.com/v1/bpi/currentprice.json
+- Vendor implementation: Public API --> [https://api.coindesk.com/v1/bpi/currentprice.json](https://api.coindesk.com/v1/bpi/currentprice.json)
 
-La particularidad que posee la API es que en función de la hora en la que se
-realice la Request, se decide en tiempo de ejecución qué implementación utilizar.
+The peculiarity of the API is that depending on the time in which to perform the Request, it’s decided at runtime which
+Gateway to use.
+The idea is to make several Requests so that, as a Client, you can visualize how the data is obtained from different
+data sources depending on the time.
 
-El formato de respuesta es el siguiente:
-```json
+### Install <a name="install"></a>
+- Dependencies: Docker & Docker-compose.
+```shell
+git clone https://github.com/rcrespodev/Blogs/tree/main/design/repository
+```
+
+Build image:
+```shell
+sudo docker build -t repository_pattern:latest .
+```
+
+The next command
+```shell
+docker image ls -f reference=repository_pattern:latest
+```
+
+should be showed an output like this:
+```shell
+REPOSITORY           TAG       IMAGE ID       CREATED         SIZE
+repository_pattern   latest    09a179937fae   7 minutes ago   522MB
+```
+
+### Usage <a name="usage"></a>
+Run api in container:
+```shell
+docker compose up -d
+```
+
+#### Consume API <a name="consume"></a>
+Request:
+```shell
+curl 0.0.0.0:8080/bitcoin-price | json_pp
+```
+
+Response:
+```shell
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Wed, 01 Jun 2022 02:46:28 GMT
+Content-Length: 277
+
 {
    "bitcoin_price" : {
       "crypto_name" : "Bitcoin",
@@ -148,39 +198,60 @@ El formato de respuesta es el siguiente:
       "updated_at" : "2022-05-30T14:59:45.663265426Z"
    },
    "error" : "",
-   "implementation_name" : "Vendor implementation( https://api.coindesk.com/v1/bpi/currentprice.json )"
+   "implementation_name" : "Vendor implementation( <https://api.coindesk.com/v1/bpi/currentprice.json> )"
 }
 ```
-Donde ***implementation_name*** devuelve el nombre de quién fué el repository que
-obtuvo los datos, donde los valores posibles son dos:
-- "implementation_name" : "Vendor implementation( https://api.coindesk.com/v1/bpi/currentprice.json )"
+Where implementation_name return the name of gateway used the API in runtime. The possible values are:
+- "implementation_name" : "Vendor implementation( [https://api.coindesk.com/v1/bpi/currentprice.json](https://api.coindesk.com/v1/bpi/currentprice.json) )"
 - "implementation_name" : "Redis"
 
-La idea es ir realizando varias Request para, como Cliente, visualizar cómo en
-los datos se obtienen de diferentes lugares en función de la hora.
+#### Run Tests in local <a name="localTesting"></a>
+Run tests in local:
+```shell
+make tests
+```
 
-Repasemos los puntos claves de la app:
-El servicio de Dominio **_BitcoinSrv_** interactúa con la interfaz
-**_BitcoinRepository_**.
-
+### Code Review <a name="codeReview"></a>
+#### type BitcoinRepository. <a name="BitcoinRepository"></a>
+BitcoinRepository is the interface that define the contract in own domain layer.
 ```go
 type BitcoinRepository interface {
-    BitcoinPrice() (error, *BitcoinPrice)
-    ImplementationName() (error, string)
+	BitcoinPrice() (error, *BitcoinPrice)
+	ImplementationName() (error, string)
 }
 ```
 
+#### type BitcoinSrv. <a name="BitcoinSrv"></a>
+The BitcoinSrv domain Services knows only the interface BitcoinRepository.
 ```go
+type BitcoinSrv struct {
+	bitcoinRepository BitcoinRepository
+}
+
+func NewBitcoinSrv(bitcoinRepository BitcoinRepository) *BitcoinSrv {
+	return &BitcoinSrv{bitcoinRepository: bitcoinRepository}
+}
+
 func (b BitcoinSrv) GetBitcoinPrice() *BitcoinResponse {
-    err, bitcoinPrice := b.bitcoinRepository.BitcoinPrice()
-    err, implementationName := b.bitcoinRepository.ImplementationName() 
+	err, bitcoinPrice := b.bitcoinRepository.BitcoinPrice()
+	err, implementationName := b.bitcoinRepository.ImplementationName()
+
 	// more code
+	
+	return &BitcoinResponse{
+		BitcoinPrice: &BitcoinPriceResponse{
+			UpdatedAt:  bitcoinPrice.updatedAt,
+			CryptoName: bitcoinPrice.cryptoName,
+			Currencies: bitcoinPrice.currencies,
+		},
+		ImplementationName: implementationName,
+	}
 }
 ```
 
-Por otra parte, encontramos las implementaciones concretas del repository.
-MockBitcoinRepository representa una capa de datos destinada a unit testing. 
-Como se vé, solo contiene un registro
+#### type MockBitcoinRepository. <a name="MockBitcoinRepository"></a>
+In the other hand, was found the concrete implementations of Repository.
+MockBitcoinRepository is an implementation with only testing purposes. He has an only in memory register.
 ```go
 type MockBitcoinRepository struct {
 	data           *domain.BitcoinPrice
@@ -205,11 +276,14 @@ func New() domain.BitcoinRepository {
 func (m MockBitcoinRepository) BitcoinPrice() (error, *domain.BitcoinPrice) {
 	return nil, m.data
 }
+
+func (m MockBitcoinRepository) ImplementationName() (error, string) {
+	return nil, m.implementation
+}
 ```
 
-Luego encontramos aquellas implementaciones utilizadas en la app.
-
-Redis:
+#### type RedisBitcoinRepository. <a name="RedisBitcoinRepository"></a>
+The concrete implementation in redis db.
 ```go
 type RedisBitcoinRepository struct {
 	redisCliente *redis.Client
@@ -217,51 +291,8 @@ type RedisBitcoinRepository struct {
 	time         time.Time
 }
 
-type RedisBitcoinPrice struct {
-	UpdatedAt  time.Time
-	CryptoName string
-	Currencies []domain.Currency
-}
-
 func New(host string, port int, db int) (*RedisBitcoinRepository, error) {
-	repository := &RedisBitcoinRepository{
-		redisCliente: redis.NewClient(&redis.Options{
-			Addr:     fmt.Sprintf("%v:%v", host, port),
-			Password: "", // no password set
-			DB:       db, // use default DB
-		}),
-		ctx:  context.Background(),
-		time: time.Date(2022, time.May, 19, 22, 57, 0, 0, time.UTC),
-	}
-
-	BitcoinPrice := domain.NewBitcoinPrice(repository.time, []domain.Currency{
-		{
-			Code:        "USD",
-			Rate:        30185.7069,
-			Description: "United States Dollar",
-		},
-		{
-			Code:        "GBP",
-			Rate:        24668.4841,
-			Description: "British Pound Sterling",
-		},
-	})
-
-	redisBitcoinPrice := &RedisBitcoinPrice{
-		UpdatedAt:  BitcoinPrice.UpdatedAt(),
-		CryptoName: BitcoinPrice.CryptoName(),
-		Currencies: BitcoinPrice.Currencies(),
-	}
-
-	marshalBitcoinPrice, err := json.Marshal(redisBitcoinPrice)
-	if err != nil {
-		return nil, err
-	}
-
-	if _, err := repository.redisCliente.Do(repository.ctx, "set", repository.time.String(), marshalBitcoinPrice).Result(); err != nil {
-		return nil, err
-	}
-
+    // more code
 	return repository, nil
 }
 
@@ -290,8 +321,13 @@ func (r RedisBitcoinRepository) ImplementationName() (error, string) {
 }
 ```
 
-Vendor:
+#### type VendorBitcoinRepository. <a name="VendorBitcoinRepository"></a>
+The Vendor implementation. He obtains the data from https://api.coindesk.com/v1/bpi/currentprice.json api.
 ```go
+type VendorBitcoinRepository struct {
+	endpoint string
+}
+
 func NewVendorRepository(endpoint string) *VendorBitcoinRepository {
 	return &VendorBitcoinRepository{
 		endpoint: endpoint,
@@ -350,11 +386,37 @@ func (v VendorBitcoinRepository) ImplementationName() (error, string) {
 }
 ```
 
-Por último, pero no menos importante, encontramos una Factory cuya responsabilidad
-es instanciar los repository necesarios y devolver el indicado en función de la
-hora actual del servidor.
-
+#### type BitcoinRepositoryFactory. <a name="BitcoinRepositoryFactory"></a>
+Finally, we find a BitcoinRepositoryFactory whose responsibility is instance all needed repositories to wake up the API
+and return one of them in function of server actual hour.
 ```go
+type BitcoinRepositoryFactory struct {
+	test                                              bool
+	mockRepository, redisRepository, vendorRepository domain.BitcoinRepository
+}
+
+func NewBitcoinRepositoryFactory(test bool) (error, *BitcoinRepositoryFactory) {
+	redisHost := os.Getenv("REDIS_HOST")
+	redisPort, err := strconv.Atoi(os.Getenv("REDIS_PORT"))
+	if err != nil {
+		return err, nil
+	}
+
+	redisRepository, err := redisBitcoinRepository.New(redisHost, redisPort, 0)
+	if err != nil {
+		return err, nil
+	}
+
+	vendorRepository := vendorBitcoinRepository.NewVendorRepository(os.Getenv("VENDOR_ENDPOINT"))
+
+	return nil, &BitcoinRepositoryFactory{
+		test:             test,
+		mockRepository:   mockBitcoinRepository.New(),
+		redisRepository:  redisRepository,
+		vendorRepository: vendorRepository,
+	}
+}
+
 func (b BitcoinRepositoryFactory) Repository() domain.BitcoinRepository {
 	if b.test {
 		return b.mockRepository
@@ -368,72 +430,4 @@ func (b BitcoinRepositoryFactory) Repository() domain.BitcoinRepository {
 		return b.vendorRepository
 	}
 }
-```
-
-### Instalación
-- Dependencias: Docker & Docker-compose.
-
-```shell
-git clone https://github.com/rcrespodev/Blogs/tree/main/design/repository
-```
-
-Build image
-```shell
-sudo docker build -t repository_pattern:latest .
-```
-
-El commando
-```shell
-docker image ls -f reference=repository_pattern:latest
-``` 
-debería mostrar un output similar al siguiente:
-```shell
-REPOSITORY           TAG       IMAGE ID       CREATED         SIZE
-repository_pattern   latest    09a179937fae   7 minutes ago   522MB
-```
-
-Run app in container:
-```shell
-docker compose up -d
-```
-
-Consume app:
-```shell
-curl 0.0.0.0:8080/bitcoin-price | json_pp
-```
-Output:
-```shell
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100   410  100   410    0     0   1000      0 --:--:-- --:--:-- --:--:--   997
-{
-   "bitcoin_price" : {
-      "crypto_name" : "Bitcoin",
-      "currencies" : [
-         {
-            "code" : "USD",
-            "description" : "United States Dollar",
-            "rate" : 30441.5389
-         },
-         {
-            "code" : "EUR",
-            "description" : "Euro",
-            "rate" : 28306.8565
-         },
-         {
-            "code" : "GBP",
-            "description" : "British Pound Sterling",
-            "rate" : 24084.1584
-         }
-      ],
-      "updated_at" : "2022-05-30T14:59:45.663265426Z"
-   },
-   "error" : "",
-   "implementation_name" : "Vendor implementation( https://api.coindesk.com/v1/bpi/currentprice.json )"
-}
-```
-
-Run tests in local:
-```shell
-make tests
 ```
