@@ -137,7 +137,10 @@ data sources depending on the time.
 ### Install <a name="install"></a>
 - Dependencies: Docker & Docker-compose.
 ```shell
-git clone https://github.com/rcrespodev/Blogs/tree/main/design/repository
+git clone https://github.com/rcrespodev/Blogs
+```
+```shell
+cd Blogs/design/repository
 ```
 
 Build image:
