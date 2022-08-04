@@ -6,7 +6,7 @@
 - [Repository Pattern.](#repositoryPattern)
   - [Introduction.](#introduction)
   - [How looks the Repository Pattern?](#howLooks)
-  - [Beneficies](#beneficies)
+  - [Benefices](#beneficies)
     - [Single Responsibility Principle](#srp)
     - [Clean Architectures](#cleanArchitectures)
     - [Unit Testing and Repositories](#testing)
